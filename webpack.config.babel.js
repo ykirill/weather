@@ -9,10 +9,10 @@ const isProd = NODE_ENV === 'production';
 
 console.log(`Webpack script run in ${NODE_ENV} mode`);
 
-const devtool = isProd ? '' : 'nosources-source-map';
+const devtool = isProd ? '' : 'source-map';
 const entry = {
-  js: './index.js',
-  vendor: [ 'react' ]
+  app: './index.js',
+  vendors: ['react'],
 };
 const output = {
   path: distPath,
@@ -22,8 +22,8 @@ const resolve = {
   extensions: ['.js', '.jsx'],
   modules: [
     path.resolve(__dirname, 'node_modules'),
-    context
-  ]
+    context,
+  ],
 };
 
 /**
@@ -48,8 +48,8 @@ const devServer = {
     warnings: true,
     colors: {
       green: '\u001b[32m',
-    }
-  }
+    },
+  },
 };
 
 /**
@@ -67,9 +67,9 @@ const htmlRule = {
   use: {
     loader: 'file-loader',
     options: {
-      name: '[name].[ext]'
-    }
-  }
+      name: '[name].[ext]',
+    },
+  },
 };
 const babelRule = {
   test: /\.js$/,
@@ -87,14 +87,14 @@ const postCssRule = {
         query: {
           modules: true,
           sourceMaps: true,
-          localIndentName: '[path]__[name]_[local]___[hash:base:64:5]'
-        }
+          localIndentName: '[path]__[name]_[local]___[hash:base:64:5]',
+        },
       },
       {
-        loader: 'postcss-loader'
-      }
-    ]
-  })
+        loader: 'postcss-loader',
+      },
+    ],
+  }),
 };
 const imagesRule = {
   test: /.*\.(gif|png|jpe?g|svg)$/i,
@@ -104,35 +104,36 @@ const imagesRule = {
       loader: 'image-webpack-loader',
       query: {
         mozjpeg: {
-          progressive: true
+          progressive: true,
         },
         gifscale: {
-          interlaced: false
+          interlaced: false,
         },
         optipng: {
-          optimizationLavel: 4
+          optimizationLavel: 4,
         },
         pngquant: {
           quality: '75-90',
-          speed: 3
-        }
-      }
-    }
-  ]
+          speed: 3,
+        },
+      },
+    },
+  ],
 };
 
 /** Plugins */
 const plugins = [
   new ExtractTextPlugin('styles.css'),
   new webpack.optimize.CommonsChunkPlugin({
-    name: 'vendor',
+    name: 'vendors',
     minChunks: Infinity,
-    filename: 'vendor.bundle.js'
+    filename: 'vendor.bundle.js',
   }),
   new webpack.DefinePlugin({
-    __DEV__: !isProd
+    __DEV__: !isProd,
   }),
-  new webpack.NamedModulesPlugin()
+  new webpack.NamedModulesPlugin(),
+  new webpack.EnvironmentPlugin(['NODE_ENV']),
 ];
 const prodPlugins = [
   new webpack.optimize.UglifyJsPlugin({
@@ -146,15 +147,16 @@ const prodPlugins = [
       dead_code: true,
       evaluate: true,
       if_return: true,
-      join_vars: true
+      join_vars: true,
     },
+    sourceMap: false,
     output: {
-      comments: false
-    }
-  })
+      comments: false,
+    },
+  }),
 ];
 const devPlugins = [
-  new webpack.HotModuleReplacementPlugin()
+  new webpack.HotModuleReplacementPlugin(),
 ];
 
 export default {
@@ -170,10 +172,10 @@ export default {
       htmlRule,
       babelRule,
       postCssRule,
-      imagesRule
+      imagesRule,
     ],
   },
   plugins: isProd ?
     [...plugins, ...prodPlugins] :
-    [...plugins, ...devPlugins]
+    [...plugins, ...devPlugins],
 };

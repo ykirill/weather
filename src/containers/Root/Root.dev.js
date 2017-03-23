@@ -1,12 +1,25 @@
 import React, { Component, PropTypes } from 'react';
+import { Provider } from 'react-redux';
 
-export default class extends Component {
+import DevTools from '../DevTools';
+
+import Main from '../Main/Main';
+
+class Root extends Component {
+  static propTypes = {
+    store: PropTypes.object.isRequired,
+  };
   render() {
-    const env = process.env.NODE_ENV;
+    const { store } = this.props;
     return (
-      <div>
-        <h1>This environment is {env}</h1>
-      </div>
+      <Provider store={store}>
+        <div>
+          <Main/>
+          <DevTools/>
+        </div>
+      </Provider>
     );
   }
 }
+
+export default Root;

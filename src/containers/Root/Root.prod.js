@@ -1,12 +1,20 @@
 import React, { Component, PropTypes } from 'react';
+import { Provider } from 'react-redux';
+
+import Main from '../Main/Main';
 
 export default class extends Component {
+  static propTypes = {
+    store: PropTypes.object.isRequired,
+  };
   render() {
-    const env = process.env.NODE_ENV;
+    const { store } = this.props;
     return (
-      <div>
-        <h1>This environment is {env}</h1>
-      </div>
+      <Provider store={store}>
+        <div>
+          <Main/>
+        </div>
+      </Provider>
     );
   }
 }
