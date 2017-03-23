@@ -1,5 +1,8 @@
 import webpack from 'webpack';
 import path from 'path';
+import pImport from 'postcss-import';
+import pCssNext from 'postcss-cssnext';
+import pBrowserReport from 'postcss-browser-reporter';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 const context = path.resolve(__dirname, './src');
@@ -87,11 +90,14 @@ const postCssRule = {
         query: {
           modules: true,
           sourceMaps: true,
-          localIndentName: '[path]__[name]_[local]___[hash:base:64:5]',
+          localIdentName: '[name]__[local]___[hash:base64:5]',
         },
       },
       {
         loader: 'postcss-loader',
+        options: {
+          plugins: () => [pImport, pCssNext, pBrowserReport],
+        },
       },
     ],
   }),
