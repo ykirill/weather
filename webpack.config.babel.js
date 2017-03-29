@@ -1,9 +1,13 @@
 import webpack from 'webpack';
 import path from 'path';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+/**
+ * postcss deps
+ * */
 import pImport from 'postcss-import';
+import pNested from 'postcss-nested';
 import pCssNext from 'postcss-cssnext';
 import pBrowserReport from 'postcss-browser-reporter';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 const context = path.resolve(__dirname, './src');
 const distPath = path.resolve(__dirname, './dist');
@@ -59,7 +63,7 @@ const devServer = {
  * Rules
  * */
 const eslintRule = {
-  enforce: 'pre',
+  enforce: 'pre', // preloader in wp.1
   test: /\.js$/,
   include: context,
   loader: 'eslint-loader',
@@ -96,7 +100,13 @@ const postCssRule = {
       {
         loader: 'postcss-loader',
         options: {
-          plugins: () => [pImport, pCssNext, pBrowserReport],
+          plugins: () =>
+            [
+              pImport({ addDependencyTo: webpack }),
+              pNested,
+              pCssNext({}),
+              pBrowserReport({}),
+            ],
         },
       },
     ],
@@ -127,7 +137,9 @@ const imagesRule = {
   ],
 };
 
-/** Plugins */
+/**
+ * Plugins
+ * */
 const plugins = [
   new ExtractTextPlugin('styles.css'),
   new webpack.optimize.CommonsChunkPlugin({

@@ -13,7 +13,7 @@ render(
 
 if (module.hot) {
   module.hot.accept('./containers/Root', () => {
-    const NewRoot = Root;
+    const NewRoot = Root.default;
     render(
       <NewRoot store={store}/>,
       document.getElementById('app'),

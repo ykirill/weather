@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import { FormGroup, InputGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
-class Form extends Component {
+export default class Form extends Component {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired,
   };
@@ -9,12 +10,20 @@ class Form extends Component {
     return (
       <div>
         <form action="getName" onSubmit={e => onSubmit(e)}>
-          <input type="text" name="text"/>
-          <input type="submit" value={'send'}/>
+          <FormGroup>
+            <ControlLabel htmlFor="city">
+              Write a city name:
+            </ControlLabel>
+            <InputGroup>
+              <FormControl id="city" type="text" name="text"/>
+
+              <InputGroup.Button>
+                <FormControl type="submit" value={'Send'}/>
+              </InputGroup.Button>
+            </InputGroup>
+          </FormGroup>
         </form>
       </div>
     );
   }
 }
-
-export default Form;

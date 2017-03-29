@@ -5,7 +5,6 @@ import createLogger from 'redux-logger';
 import DevTools from '../containers/DevTools';
 import reducers from '../reducers';
 
-const initialState = {};
 const rootReducer = combineReducers(Object.assign({}, reducers)); // wtf?
 
 const loggerMiddlware = createLogger({
@@ -18,6 +17,14 @@ const enhancer = compose(
   DevTools.instrument(),
 );
 
-const store = createStore(rootReducer, initialState, enhancer);
+const persistedState = localStorage.getItem('WeatherAppState') ?
+  JSON.parse(localStorage.getItem('WeatherAppState')) :
+  {};
+
+const store = createStore(rootReducer, persistedState, enhancer);
+
+store.subscribe(() => {
+  localStorage.setItem('WeatherAppState', JSON.stringify(store.getState()));
+});
 
 export default store;
