@@ -1,22 +1,17 @@
+import 'babel-polyfill';
 import React from 'react';
 import { render } from 'react-dom';
 
-import store from './store';
+import configureStore from './store';
 import Root from './containers/Root';
+import rootSaga from './sagas';
 
 import './index.html';
+
+const store = configureStore({});
+store.runSaga(rootSaga);
 
 render(
   <Root store={ store }/>,
   document.getElementById('app'),
 );
-
-if (module.hot) {
-  module.hot.accept('./containers/Root', () => {
-    const NewRoot = Root.default;
-    render(
-      <NewRoot store={store}/>,
-      document.getElementById('app'),
-    );
-  });
-}

@@ -12,7 +12,7 @@ export default class Form extends Component {
         <form action="getName" onSubmit={e => onSubmit(e)}>
           <FormGroup>
             <ControlLabel htmlFor="city">
-              Write a city name:
+              Enter a city name:
             </ControlLabel>
             <InputGroup>
               <FormControl id="city" type="text" name="text"/>

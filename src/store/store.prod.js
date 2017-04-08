@@ -1,22 +1,17 @@
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware, { END } from 'redux-saga';
 
-import reducers from '../reducers';
+import rootReducer from '../reducers';
 
-const rootReducer = combineReducers(Object.assign({}, reducers));
+export default function configureStore(initialState) {
+  const sagaMiddleware = createSagaMiddleware();
+  const store = createStore(
+    rootReducer,
+    initialState,
+    applyMiddleware(sagaMiddleware),
+  );
 
-const enhancer = compose(
-  applyMiddleware(thunk),
-);
-
-const persistedState = localStorage.getItem('WeatherAppState') ?
-  JSON.parse(localStorage.getItem('WeatherAppState')) :
-  {};
-
-const store = createStore(rootReducer, persistedState, enhancer);
-
-store.subscribe(() => {
-  localStorage.setItem('WeatherAppState', JSON.stringify(store.getState()));
-});
-
-export default store;
+  store.runSaga = sagaMiddleware.run;
+  store.close = () => store.dispatch(END);
+  return store;
+}

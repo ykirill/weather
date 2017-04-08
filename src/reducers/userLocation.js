@@ -1,7 +1,7 @@
 import {
-  LOC_SUCCESS,
-} from '../actions/actionTypes';
-
+  LOCATION,
+} from '../actions';
+// TODO rework
 const userLocation = (
   state = {
     latitude: '',
@@ -10,7 +10,7 @@ const userLocation = (
   action,
 ) => {
   switch (action.type) {
-    case (LOC_SUCCESS):
+    case (LOCATION.SUCCESS):
       return {
         latitude: action.position.latitude,
         longitude: action.position.longitude,

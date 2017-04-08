@@ -1,33 +1,23 @@
-import { API_SUCCESS, SAVE_CITY } from '../actions/actionTypes';
+import { API } from '../actions';
 
+  // TODO rework
 const cities = (
   state = {
     current: {},
-    cities: {},
-    saved: {},
+    cities: [],
   },
   action,
 ) => {
-  const newCity = action.res ?
-    action.res : {};
+  // TODO save city in array by alphabet order?
   switch (action.type) {
-    case (API_SUCCESS):
-      return new Set(Object.keys(state.cities)).has(newCity.id) ?
-        state : Object.assign({}, state, {
-          current: newCity,
-          cities: {
-            ...state.cities,
-            [newCity.id]: newCity,
-          },
-        });
-    case (SAVE_CITY):
-      return new Set(Object.keys(state.saved)).has(state.current.id) ?
-        state : Object.assign({}, state, {
-          saved: {
-            ...state.saved,
-            [state.current.id]: state.current,
-          },
-        });
+    case (API.SUCCESS):
+      return new Set(state.cities).has(action.payload.response) ?
+        state : {
+          current: action.payload.response,
+          cities: [
+            ...state.cities, action.payload.response,
+          ],
+        };
     default:
       return state;
   }

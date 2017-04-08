@@ -1,30 +1,39 @@
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
+import { createStore, applyMiddleware, compose } from 'redux';
+import createSagaMiddleware, { END } from 'redux-saga';
 import createLogger from 'redux-logger';
 
 import DevTools from '../containers/DevTools';
-import reducers from '../reducers';
+import rootReducer from '../reducers';
 
-const rootReducer = combineReducers(Object.assign({}, reducers)); // wtf?
 
-const loggerMiddlware = createLogger({
-  level: 'info',
-  collapsed: false,
-});
+export default function configureStore(initialState) {
+  const sagaMiddleware = createSagaMiddleware();
+  const loggerMiddlware = createLogger({
+    level: 'info',
+    collapsed: false,
+  });
+  const enhancer = compose(
+    applyMiddleware(
+      sagaMiddleware,
+      loggerMiddlware,
+    ),
+    DevTools.instrument(),
+  );
+  const store = createStore(
+    rootReducer,
+    initialState,
+    enhancer,
+  );
 
-const enhancer = compose(
-  applyMiddleware(thunk, loggerMiddlware),
-  DevTools.instrument(),
-);
+  if (module.hot) {
+    // Enable Webpack hot module replacement for reducers
+    module.hot.accept('../reducers', () => {
+      const nextRootReducer = rootReducer.default;
+      store.replaceReducer(nextRootReducer);
+    });
+  }
 
-const persistedState = localStorage.getItem('WeatherAppState') ?
-  JSON.parse(localStorage.getItem('WeatherAppState')) :
-  {};
-
-const store = createStore(rootReducer, persistedState, enhancer);
-
-store.subscribe(() => {
-  localStorage.setItem('WeatherAppState', JSON.stringify(store.getState()));
-});
-
-export default store;
+  store.runSaga = sagaMiddleware.run;
+  store.close = () => store.dispatch(END);
+  return store;
+}
