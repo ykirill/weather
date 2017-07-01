@@ -8,14 +8,14 @@ import rootReducer from '../reducers';
 
 export default function configureStore(initialState) {
   const sagaMiddleware = createSagaMiddleware();
-  const loggerMiddlware = createLogger({
+  const loggerMiddleware = createLogger({
     level: 'info',
     collapsed: false,
   });
   const enhancer = compose(
     applyMiddleware(
       sagaMiddleware,
-      loggerMiddlware,
+      loggerMiddleware,
     ),
     DevTools.instrument(),
   );
@@ -28,7 +28,7 @@ export default function configureStore(initialState) {
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
     module.hot.accept('../reducers', () => {
-      const nextRootReducer = rootReducer.default;
+      const nextRootReducer = rootReducer;
       store.replaceReducer(nextRootReducer);
     });
   }

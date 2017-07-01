@@ -1,7 +1,7 @@
 import {
   LOCATION,
 } from '../actions';
-// TODO rework
+
 const userLocation = (
   state = {
     latitude: '',
@@ -12,8 +12,8 @@ const userLocation = (
   switch (action.type) {
     case (LOCATION.SUCCESS):
       return {
-        latitude: action.position.latitude,
-        longitude: action.position.longitude,
+        latitude: Math.round(action.payload.position.latitude * 100) / 100,
+        longitude: Math.round(action.payload.position.longitude * 100) / 100,
       };
     default:
       return state;

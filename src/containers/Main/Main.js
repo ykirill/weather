@@ -3,16 +3,21 @@ import { connect } from 'react-redux';
 import { PageHeader, Grid, Col } from 'react-bootstrap';
 
 import {
-  api,
+  api, location,
 } from '../../actions/index';
-import Navigation from '../../components/Navigation/Navigation';
-import Form from '../../components/Form/Form';
-import Current from '../../components/Current/Current';
+
+import Navigation from './components/Navigation';
+import Form from './components/Form';
+import Forecast from './components/Forecast';
+
+import { isLocationValid } from '../../services/loacationServices';
 
 class Main extends Component {
   componentWillMount() {
-    // TODO App should't request user location every time
-    // this.props.dispatch(getUserLocation());
+    // TODO predicate is not semantic
+    if (!isLocationValid(this.props.userLocation)) {
+      this.props.dispatch(location.request());
+    }
   }
   componentDidMount() {
     // this.props.dispatch(getWeatherByUserCoords(this.props.userLocation));
@@ -24,7 +29,7 @@ class Main extends Component {
     input.value = '';
   }
   render() {
-    const { current, dispatch } = this.props;
+    const { forecast } = this.props;
     return (
       <div>
         <Navigation/>
@@ -32,10 +37,9 @@ class Main extends Component {
           <Col xs={12} md={8}>
             <PageHeader>City</PageHeader>
             <Form onSubmit={e => this.onSubmit(e)}/>
-            { Object.keys(current).length > 0 ?
-              <Current
-                city={current}
-                onRefreshClick={city => dispatch(api.request(city))}
+            { Object.keys(forecast).length > 0 ?
+              <Forecast
+                forecast={forecast}
                 onSaveClick={() => {}}
               /> : ''}
           </Col>
@@ -53,7 +57,7 @@ class Main extends Component {
 }
 
 export default connect(state => ({
-  current: state.cities.current,
-  saved: state.cities.saved,
+  forecast: state.weather.forecast,
   userLocation: state.userLocation,
+  errors: state.errors,
 }))(Main);

@@ -6,25 +6,31 @@ const SAVE = 'SAVE';
 const DELETE = 'DELETE';
 
 /**
+ * @Params:
  * base: string,
  * types: array
+ * @Return:
+ * typesList: object
  * */
 const createTypes = (base, types) =>
   types.reduce((acc, type) =>
     ({ ...acc, [type]: `${base}_${type}` }), {});
 
-export const API = createTypes('API', [REQUEST, SUCCESS, FAILURE]);
-export const LOCATION = createTypes('LOCATION', [REQUEST, SUCCESS, FAILURE]);
-export const CITY = createTypes('CITY', [SAVE, DELETE]);
-
 /**
+ * @Params:
  * type: string,
- * payload: obj,
+ * payload: object,
+ * @Return:
+ * action: object
  * */
 const action = (type, payload = {}) => ({
   type,
   payload,
 });
+
+export const API = createTypes('API', [REQUEST, SUCCESS, FAILURE]);
+export const LOCATION = createTypes('LOCATION', [REQUEST, SUCCESS, FAILURE]);
+export const CITY = createTypes('CITY', [SAVE, DELETE]);
 
 export const api = {
   request: cityName =>
